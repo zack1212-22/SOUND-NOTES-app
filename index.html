@@ -4,239 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SOUND NOTES</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="manifest" href="data:application/manifest+json,{'name':'SoundNotes','short_name':'Notes','start_url':'index.html','display':'standalone'}">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --accent: #6366f1;
-            --accent-soft: #eef2ff;
-            --text-main: #1e293b;
-            --text-sub: #64748b;
-            --success: #10b981;
-            --danger: #f43f5e;
-        }
-
-        body {
-            font-family: 'Kanit', sans-serif;
-            background-color: var(--bg);
-            background-image: radial-gradient(#cbd5e1 0.5px, transparent 0.5px);
-            background-size: 20px 20px; /* พื้นหลังลายจุดเบาๆ */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-
-        .container {
-            background: var(--card);
-            width: 100%;
-            max-width: 420px;
-            padding: 40px;
-            border-radius: 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.05);
-            text-align: center;
-            position: relative;
-        }
-
-        h2 {
-            color: var(--text-main);
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        p.subtitle {
-            color: var(--text-sub);
-            font-size: 0.9rem;
-            margin-bottom: 25px;
-        }
-
-        textarea {
-            width: 100%;
-            height: 140px;
-            padding: 18px;
-            border: 2px solid #f1f5f9;
-            border-radius: 20px;
-            background: #f8fafc;
-            font-family: 'Kanit', sans-serif;
-            font-size: 16px;
-            color: var(--text-main);
-            resize: none;
-            box-sizing: border-box;
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: var(--accent);
-            background: #fff;
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.1);
-        }
-
-        .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        button {
-            border: none;
-            border-radius: 15px;
-            padding: 14px;
-            font-family: 'Kanit', sans-serif;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s active;
-        }
-
-        .btn-perm {
-            background: var(--accent-soft);
-            color: var(--accent);
-        }
-
-        .btn-perm:hover { background: #e0e7ff; }
-
-        .main-btns {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .btn-start {
-            background: var(--accent);
-            color: white;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-        }
-
-        .btn-start:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); }
-
-        .btn-stop {
-            background: #f1f5f9;
-            color: var(--text-sub);
-        }
-
-        .btn-stop:hover { background: #e2e8f0; color: var(--danger); }
-
-        .status-pill {
-            margin-top: 30px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: #f1f5f9;
-            border-radius: 100px;
-            font-size: 13px;
-            color: var(--text-sub);
-        }
-
-        .dot {
-            width: 8px;
-            height: 8px;
-            background: #cbd5e1;
-            border-radius: 50%;
-        }
-
-        .dot.active {
-            background: var(--success);
-            box-shadow: 0 0 10px var(--success);
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.4; }
-            100% { opacity: 1; }
-        }
+        :root { --p: #6366f1; --bg: #f8fafc; }
+        body { font-family: 'Kanit', sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; width: 90%; max-width: 380px; padding: 35px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); text-align: center; }
+        h2 { color: #1e293b; margin-bottom: 5px; }
+        textarea { width: 100%; height: 150px; border: 2px solid #f1f5f9; border-radius: 20px; padding: 15px; font-size: 16px; margin: 20px 0; outline: none; transition: 0.3s; resize: none; box-sizing: border-box; }
+        textarea:focus { border-color: var(--p); background: #fff; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 15px; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 10px; transition: 0.2s; }
+        .btn-perm { background: #eef2ff; color: var(--p); }
+        .btn-start { background: var(--p); color: white; }
+        .btn-stop { background: #f1f5f9; color: #64748b; }
+        .status { font-size: 13px; color: #94a3b8; margin-top: 15px; }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="card">
     <h2>✨ SOUND NOTES</h2>
-    <p class="subtitle">ระบบแจ้งเตือนกันลืมทุก 30 นาที</p>
-    
+    <p style="color: #64748b; font-size: 14px;">ระบบแจ้งเตือนทุก 5 นาที</p>
     <textarea id="noteInput" placeholder="จดสิ่งที่ต้องทำที่นี่..."></textarea>
-    
-    <div class="controls">
-        <button class="btn-perm" onclick="requestPermission()">🔓 เปิดสิทธิ์แจ้งเตือน & เสียง</button>
-        <div class="main-btns">
-            <button class="btn-start" onclick="startReminder()">เริ่มทำงาน</button>
-            <button class="btn-stop" onclick="stopReminder()">หยุดพัก</button>
-        </div>
+    <button class="btn btn-perm" onclick="requestPermission()">🔓 เปิดสิทธิ์แจ้งเตือน & เสียง</button>
+    <div style="display: flex; gap: 10px;">
+        <button id="startBtn" class="btn btn-start" onclick="startTimer()">เริ่มทำงาน</button>
+        <button class="btn btn-stop" onclick="stopTimer()">หยุดพัก</button>
     </div>
-
-    <div class="status-pill">
-        <div id="statusDot" class="dot"></div>
-        <span id="statusText">สถานะ: ปิดการทำงาน</span>
-    </div>
+    <div id="status" class="status">● สถานะ: ปิดการทำงาน</div>
 </div>
 
-<audio id="alarmSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+<audio id="sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
 <script>
-    let timer = null;
-    const noteArea = document.getElementById('noteInput');
-    const statusText = document.getElementById('statusText');
-    const statusDot = document.getElementById('statusDot');
-    const audio = document.getElementById('alarmSound');
+    let timer;
+    const audio = document.getElementById('sound');
 
-    window.onload = () => {
-        const saved = localStorage.getItem('hw_note_modern');
-        if (saved) noteArea.value = saved;
-    };
-
-    noteArea.oninput = () => {
-        localStorage.setItem('hw_note_modern', noteArea.value);
-    };
-
-    function requestPermission() {
-        Notification.requestPermission().then(perm => {
-            if (perm === "granted") {
-                alert("ตั้งค่าเรียบร้อย! ระบบพร้อมแจ้งเตือน");
-                audio.play().then(() => audio.pause());
-            }
-        });
+    // ลงทะเบียน Service Worker เพื่อให้ทำงานเบื้องหลังได้
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
     }
 
-    function notify() {
-        const msg = noteArea.value || "อย่าลืมทำการบ้านนะ!";
-        if (Notification.permission === "granted") {
-            new Notification("📌 Reminder!", { body: msg });
+    async function requestPermission() {
+        const perm = await Notification.requestPermission();
+        if (perm === 'granted') {
+            audio.play().then(() => audio.pause());
+            alert("ตั้งค่าเรียบร้อย! ระบบพร้อมแจ้งเตือน");
         }
+    }
+
+    function startTimer() {
+    if (Notification.permission !== 'granted') return alert("กรุณาเปิดสิทธิ์ก่อนครับ");
+    
+    // ✅ จุดสำคัญ: ล้างตัวนับเก่าทิ้งก่อนเริ่มใหม่ทุกครั้ง ป้องกันการแจ้งเตือนซ้อน
+    clearInterval(timer); 
+    
+    sendNotify(); // แจ้งเตือนทันที 1 ครั้ง
+    
+    // ตั้งเวลา 30 นาที (1,800,000)
+    timer = setInterval(sendNotify, 5000); 
+
+    const statusDiv = document.getElementById('status');
+    statusDiv.innerHTML = "● สถานะ: กำลังเตือนทุก 30 นาที";
+    statusDiv.style.color = "#10b981";
+}
+
+function stopTimer() {
+    // ✅ สั่งหยุดตัวนับเวลาทั้งหมด
+    clearInterval(timer); 
+    
+    const statusDiv = document.getElementById('status');
+    statusDiv.innerHTML = "● สถานะ: หยุดการทำงานแล้ว";
+    statusDiv.style.color = "#ef4444"; // เปลี่ยนเป็นสีแดงให้รู้ว่าหยุดแล้ว
+}
+
+    function stopTimer() {
+        clearInterval(timer);
+        document.getElementById('status').innerText = "● สถานะ: ปิดการทำงาน";
+        document.getElementById('status').style.color = "#94a3b8";
+    }
+
+    function sendNotify() {
+        const text = document.getElementById('noteInput').value || "ได้เวลาแล้ว!";
         audio.currentTime = 0;
         audio.play();
-    }
-
-    function startReminder() {
-        if (Notification.permission !== "granted") {
-            alert("กรุณากดเปิดสิทธิ์แจ้งเตือนก่อนครับ");
-            return;
-        }
-        if (timer) return;
-
-        notify();
-        timer = setInterval(notify, 30 * 60 * 1000);
-
-        statusText.innerText = "สถานะ: กำลังเตือนทุก 30 นาที";
-        statusDot.classList.add('active');
-    }
-
-    function stopReminder() {
-        if (timer) {
-            clearInterval(timer);
-            timer = null;
-            statusText.innerText = "สถานะ: ปิดการทำงาน";
-            statusDot.classList.remove('active');
-        }
+        
+        navigator.serviceWorker.ready.then(reg => {
+            reg.showNotification('📌 Reminder!', {
+                body: text,
+                icon: 'https://cdn-icons-png.flaticon.com/512/564/564619.png',
+                vibrate: [200, 100, 200]
+            });
+        });
     }
 </script>
-
 </body>
 </html>

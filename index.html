@@ -4,98 +4,171 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SOUND NOTES</title>
-    <link rel="manifest" href="data:application/manifest+json,{'name':'SoundNotes','short_name':'Notes','start_url':'index.html','display':'standalone'}">
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <style>
-        :root { --p: #6366f1; --bg: #f8fafc; }
+        :root { --p: #6366f1; --bg: #f8fafc; --danger: #ef4444; }
         body { font-family: 'Kanit', sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .card { background: white; width: 90%; max-width: 380px; padding: 35px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); text-align: center; }
-        h2 { color: #1e293b; margin-bottom: 5px; }
-        textarea { width: 100%; height: 150px; border: 2px solid #f1f5f9; border-radius: 20px; padding: 15px; font-size: 16px; margin: 20px 0; outline: none; transition: 0.3s; resize: none; box-sizing: border-box; }
-        textarea:focus { border-color: var(--p); background: #fff; }
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 15px; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 10px; transition: 0.2s; }
-        .btn-perm { background: #eef2ff; color: var(--p); }
+        .card { background: white; width: 90%; max-width: 400px; padding: 30px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); text-align: center; }
+        
+        .timer-display { font-family: 'JetBrains Mono', monospace; font-size: 35px; font-weight: bold; color: var(--p); margin: 15px 0; background: #f5f7ff; padding: 15px; border-radius: 20px; border: 2px dashed #cbd5e1; }
+        
+        .setting-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; background: #f8fafc; padding: 10px 15px; border-radius: 15px; }
+        .setting-row select, .setting-row input { border: 1px solid #e2e8f0; padding: 8px; border-radius: 10px; font-family: 'Kanit'; outline: none; color: var(--p); font-weight: 600; }
+        .setting-row input { width: 60px; text-align: center; }
+
+        textarea { width: 100%; height: 90px; border: 2px solid #f1f5f9; border-radius: 15px; padding: 15px; font-size: 16px; margin-bottom: 15px; outline: none; transition: 0.3s; resize: none; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
+        
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 15px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: 'Kanit', sans-serif; }
+        
+        .btn-perm { background: #eef2ff; color: var(--p); grid-column: span 2; }
+        .btn-test { background: white; color: #64748b; border: 1px solid #e2e8f0; grid-column: span 2; margin-bottom: 10px; }
         .btn-start { background: var(--p); color: white; }
-        .btn-stop { background: #f1f5f9; color: #64748b; }
-        .status { font-size: 13px; color: #94a3b8; margin-top: 15px; }
+        .btn-stop { background: #fee2e2; color: var(--danger); }
+        
+        .status { font-size: 13px; color: #94a3b8; margin-top: 20px; }
+        .working { color: #10b981 !important; font-weight: 600; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>✨ SOUND NOTES</h2>
-    <p style="color: #64748b; font-size: 14px;">ระบบแจ้งเตือนทุก 30 นาที</p>
-    <textarea id="noteInput" placeholder="จดสิ่งที่ต้องทำที่นี่..."></textarea>
-    <button class="btn btn-perm" onclick="requestPermission()">🔓 เปิดสิทธิ์แจ้งเตือน & เสียง</button>
-    <div style="display: flex; gap: 10px;">
-        <button id="startBtn" class="btn btn-start" onclick="startTimer()">เริ่มทำงาน</button>
-        <button class="btn btn-stop" onclick="stopTimer()">หยุดพัก</button>
+    <h2 style="margin:0 0 15px 0">🎶 SOUND NOTES</h2>
+    
+    <div id="countdown" class="timer-display">00:00</div>
+
+    <div class="setting-row">
+        <span>⏰ ตั้งเวลา</span>
+        <div>
+            <input type="number" id="minutesInput" value="30" min="1"> <span>นาที</span>
+        </div>
     </div>
-    <div id="status" class="status">● สถานะ: ปิดการทำงาน</div>
+
+    <div class="setting-row">
+        <span>🔊 เสียงเตือน</span>
+        <select id="soundSelect" onchange="previewSound()">
+            <option value="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3">Digital Ting</option>
+            <option value="https://assets.mixkit.co/active_storage/sfx/1084/1084-preview.mp3">Classic Bell</option>
+            <option value="https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3">Whistle</option>
+            <option value="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3">Soft Piano</option>
+        </select>
+    </div>
+
+    <textarea id="noteInput" placeholder="เตือนเรื่องอะไรดี..."></textarea>
+    
+    <button class="btn btn-test" onclick="sendNotify()">🔔 ทดสอบเสียง & แจ้งเตือน</button>
+    
+    <div class="btn-group">
+        <button class="btn btn-perm" onclick="requestPermission()">🔓  ขอสิทธิ์แจ้งเตือน</button>
+        <button id="startBtn" class="btn btn-start" onclick="startTimer()"> เริ่ม</button>
+        <button id="stopBtn" class="btn btn-stop" onclick="stopTimer()">หยุดพัก</button>
+    </div>
+    
+    <div id="status" class="status">● พร้อมลุย!</div>
 </div>
 
-<audio id="sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+<audio id="sound" src="" preload="auto"></audio>
 
 <script>
-    let timer;
-    const audio = document.getElementById('sound');
+    let countdownTimer = null;
+    let timeLeft = 0;
 
-    // ลงทะเบียน Service Worker เพื่อให้ทำงานเบื้องหลังได้
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
+    const audio = document.getElementById('sound');
+    const display = document.getElementById('countdown');
+    const statusDiv = document.getElementById('status');
+    const minutesInput = document.getElementById('minutesInput');
+    const soundSelect = document.getElementById('soundSelect');
+    const noteInput = document.getElementById('noteInput');
+
+    window.onload = () => {
+        noteInput.value = localStorage.getItem('myNote') || "";
+        minutesInput.value = localStorage.getItem('myTime') || 30;
+        soundSelect.value = localStorage.getItem('mySound') || soundSelect.options[0].value;
+        audio.src = soundSelect.value;
+    };
+
+    function previewSound() {
+        audio.src = soundSelect.value;
+        audio.currentTime = 0;
+        audio.play();
+        localStorage.setItem('mySound', soundSelect.value);
     }
 
     async function requestPermission() {
         const perm = await Notification.requestPermission();
         if (perm === 'granted') {
-            audio.play().then(() => audio.pause());
-            alert("ตั้งค่าเรียบร้อย! ระบบพร้อมแจ้งเตือน");
+            previewSound();
+            alert("พร้อมใช้งาน!");
         }
     }
 
+    function updateDisplay(ms) {
+        let totalSec = Math.max(0, Math.floor(ms / 1000));
+        let m = Math.floor(totalSec / 60);
+        let s = totalSec % 60;
+        display.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+
     function startTimer() {
-    if (Notification.permission !== 'granted') return alert("กรุณาเปิดสิทธิ์ก่อนครับ");
-    
-    // ✅ จุดสำคัญ: ล้างตัวนับเก่าทิ้งก่อนเริ่มใหม่ทุกครั้ง ป้องกันการแจ้งเตือนซ้อน
-    clearInterval(timer); 
-    
-    sendNotify(); // แจ้งเตือนทันที 1 ครั้ง
-    
-    // ตั้งเวลา 30 นาที (1,800,000)
-    timer = setInterval(sendNotify, 1800000); 
+        if (Notification.permission !== 'granted') return alert("ต้องขอสิทธิ์ก่อนครับ");
+        
+        const mins = parseInt(minutesInput.value) || 1;
+        const duration = mins * 60 * 1000;
+        
+        stopTimer(); 
+        localStorage.setItem('myNote', noteInput.value);
+        localStorage.setItem('myTime', mins);
 
-    const statusDiv = document.getElementById('status');
-    statusDiv.innerHTML = "● สถานะ: กำลังเตือนทุก 30 นาที";
-    statusDiv.style.color = "#10b981";
-}
+        sendNotify();
+        
+        timeLeft = duration;
+        updateDisplay(timeLeft);
+        
+        countdownTimer = setInterval(() => {
+            timeLeft -= 1000;
+            if (timeLeft <= 0) {
+                timeLeft = duration;
+                sendNotify();
+            }
+            updateDisplay(timeLeft);
+        }, 1000);
 
-function stopTimer() {
-    // ✅ สั่งหยุดตัวนับเวลาทั้งหมด
-    clearInterval(timer); 
-    
-    const statusDiv = document.getElementById('status');
-    statusDiv.innerHTML = "● สถานะ: หยุดการทำงานแล้ว";
-    statusDiv.style.color = "#ef4444"; // เปลี่ยนเป็นสีแดงให้รู้ว่าหยุดแล้ว
-}
+        statusDiv.innerText = "● ระบบกำลังทำงาน...";
+        statusDiv.classList.add('working');
+        toggleInputs(true);
+    }
 
     function stopTimer() {
-        clearInterval(timer);
-        document.getElementById('status').innerText = "● สถานะ: ปิดการทำงาน";
-        document.getElementById('status').style.color = "#94a3b8";
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+        display.innerText = "00:00";
+        statusDiv.innerText = "● หยุดทำงานแล้ว";
+        statusDiv.classList.remove('working');
+        toggleInputs(false);
+    }
+
+    function toggleInputs(disabled) {
+        minutesInput.disabled = disabled;
+        soundSelect.disabled = disabled;
+        document.getElementById('startBtn').disabled = disabled;
     }
 
     function sendNotify() {
-        const text = document.getElementById('noteInput').value || "ได้เวลาแล้ว!";
+        const text = noteInput.value || "ได้เวลาแล้ว!";
+        audio.src = soundSelect.value;
         audio.currentTime = 0;
-        audio.play();
-        
-        navigator.serviceWorker.ready.then(reg => {
-            reg.showNotification('📌 Reminder!', {
-                body: text,
-                icon: 'https://cdn-icons-png.flaticon.com/512/564/564619.png',
-                vibrate: [200, 100, 200]
+        audio.play().catch(e => console.log(e));
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.ready.then(reg => {
+                reg.showNotification('📌 SOUND NOTES', {
+                    body: text,
+                    icon: 'https://cdn-icons-png.flaticon.com/512/564/564619.png',
+                    vibrate: [300, 100, 300],
+                    tag: 'sn-pwa'
+                });
             });
-        });
+        }
     }
 </script>
 </body>

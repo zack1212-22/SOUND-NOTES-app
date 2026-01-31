@@ -24,7 +24,7 @@
 
 <div class="card">
     <h2>✨ SOUND NOTES</h2>
-    <p style="color: #64748b; font-size: 14px;">ระบบแจ้งเตือนทุก 5 นาที</p>
+    <p style="color: #64748b; font-size: 14px;">ระบบแจ้งเตือนทุก 30 นาที</p>
     <textarea id="noteInput" placeholder="จดสิ่งที่ต้องทำที่นี่..."></textarea>
     <button class="btn btn-perm" onclick="requestPermission()">🔓 เปิดสิทธิ์แจ้งเตือน & เสียง</button>
     <div style="display: flex; gap: 10px;">
@@ -62,7 +62,7 @@
     sendNotify(); // แจ้งเตือนทันที 1 ครั้ง
     
     // ตั้งเวลา 30 นาที (1,800,000)
-    timer = setInterval(sendNotify, 5000); 
+    timer = setInterval(sendNotify, 1800000); 
 
     const statusDiv = document.getElementById('status');
     statusDiv.innerHTML = "● สถานะ: กำลังเตือนทุก 30 นาที";
